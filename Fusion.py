@@ -76,46 +76,17 @@ class InputBox:
                 if event.key == pg.K_RETURN:
                     print(self.text)
                     self.text = ''
+                    
+                    
+
                 elif event.key == pg.K_BACKSPACE:
                     self.text = self.text[:-1]
+
                 else:
-                    if chr(event.key).isnumeric() or '.':
+                    if event.unicode.isnumeric() or event.unicode == '.':
                         self.text += event.unicode
                 self.txt_surface = FONT.render(self.text, True, self.color)
-                # else:
-                    
-                #     self.text += event.unicode
-                    
-                # # Re-render the text.
-                # self.txt_surface = FONT.render(self.text, True, self.color)
-
-    # def handle_event_num(self, event):
-
-    #     if event.type == pg.MOUSEBUTTONDOWN:
-    #         if self.rect.collidepoint(event.pos):
-    #             self.active = True
-    #         else:
-    #             self.active = False
-             
-    #         if self.active:
-    #             self.color = COLOR_ACTIVE
-    #         else:
-    #             self.color = COLOR_INACTIVE
-
-    #     if event.type == pg.KEYDOWN:
-    #         if self.active:
-    #             if event.key == pg.K_RETURN:
-    #                 print(self.text)
-    #                 self.text = ''
-    #             elif event.key == pg.K_BACKSPACE:
-    #                 self.text = self.text[:-1]
-    #             else:
-    #                 if chr(event.key).isnumeric():
-    #                     self.text += event.unicode
-    #             self.txt_surface = FONT.render(self.text, True, self.color)
-    
-    # def recollect(self):
-    #     return self.keep
+                
     
     def update(self):
         # Resize the box if the text is too long.
@@ -133,13 +104,15 @@ class InputBox:
             return True
         else :
             return False
+
 class Simulation:
     def __init__(self, compress_length, basket_distance):
         self.compress_length = compress_length
         self.basket_distance =basket_distance
+        self.k = 950
         self.degree = 60
         self.g = -9.806
-        self.u = math.sqrt(((self.compress_length**2)*832.8/0.398)+(2*self.g*self.compress_length*math.sin(math.radians(self.degree))))
+        self.u = math.sqrt(((self.compress_length**2)*self.k/0.398)+(2*self.g*self.compress_length*math.sin(math.radians(self.degree))))
         self.ux = self.u*math.cos(math.radians(self.degree))
         self.uy = self.u*math.sin(math.radians(self.degree))
         self.time = 0
@@ -192,60 +165,62 @@ class Basket:
 IStoPixel_x = 960/3.25 
 IStoPixel_y = 720/2.4375 
 
-num_runSimulation = 0
+
+
 run = True
+num_runSimulation = 0
 win_x, win_y = 960, 720
 screen = pg.display.set_mode((win_x, win_y))
+Showwall_height = ''
+FONT = pg.font.Font(None, 32)
 
 # ////////////////////////////////พื้นหลังข้อความ///////////////////////////////////////
 
 BackgroundWhite = Button(50, 50, 860, 620, 255, 255, 255) # สร้าง Object จากคลาส Rectangle ขึ้นมา
 START_BackgroundBox = Button(385, 525, 180, 80, 188, 229, 185)
 Back_BackgroundBox = Button(10, 10, 85, 40, 255, 255, 255)
-ShowBar_BackgroundBox = Button(120, 10, 800, 90, 219, 219, 219)
-Sping_BackgroundBox = Button(180, 250, 200, 32, 219, 219, 219)
-Basket_BackgroundBox = Button(180, 400, 200, 32, 219, 219, 219)
+ShowBar_BackgroundBox = Button(120, 10, 800, 100, 219, 219, 219)
+Sping_BackgroundBox = Button(190, 260, 200, 32, 219, 219, 219)
+Basket_BackgroundBox = Button(190, 410, 200, 32, 219, 219, 219)
 ChoiceWall_50_BackgroundBox = Button(620, 340, 32, 32, 219, 219, 219)
 ChoiceWall_50_BackgroundBox_Press = False
 ChoiceWall_100_BackgroundBox = Button(750, 340, 32, 32, 219, 219, 219)
 ChoiceWall_100_BackgroundBox_Press = False
-ShowRecoilSpring_BackgroundBox = Button(160, 60, 95, 30, 255, 255, 255)
-ShowHeighWall_BackgroundBox = Button(345, 60, 95, 30, 255, 255, 255)
-ShowBasketPosition_BackgroundBox = Button(535, 60, 95, 30, 255, 255, 255)
-ShowMachinePosition_BackgroundBox = Button(745, 60, 95, 30, 255, 255, 255)
-ReSimulation_BackgroundBox = Button(380, 110, 200, 40, 255, 255, 255)
-
-FONT = pg.font.Font(None, 32)
+ShowRecoilSpring_BackgroundBox = Button(160, 55, 95, 40, 255, 255, 255)
+ShowHeighWall_BackgroundBox = Button(345, 55, 95, 40, 255, 255, 255)
+ShowBasketPosition_BackgroundBox = Button(535, 55, 95, 40, 255, 255, 255)
+ShowMachinePosition_BackgroundBox = Button(745, 55, 95, 40, 255, 255, 255)
+ReSimulation_BackgroundBox = Button(380, 120, 200, 40, 255, 255, 255)
 
 # ////////////////////////////////กรอบข้อความ///////////////////////////////////////
 
-SIMULATION_EdgeBox = Rectangle(300, 75, 365, 70, 76, 74, 89) # สร้าง Object จากคลาส Button ขึ้นมา
+SIMULATION_EdgeBox = Rectangle(300, 70, 365, 90, 76, 74, 89) # สร้าง Object จากคลาส Button ขึ้นมา
 START_EdgeBox = Rectangle(385, 525, 180, 80, 76, 74, 89)
 Back_EdgeBox = Rectangle(10, 10, 85, 40, 76, 74, 89)
-ShowBar_EdgeBox = Rectangle(120, 10, 800, 90, 76, 74, 89)
-ReSimulation_EdgeBox = Rectangle(380, 110, 200, 40, 76, 74, 89)
-ShowRecoilSpring_EdgeBox = Rectangle(160, 60, 95, 30, 76, 74, 89)
-ShowHeighWall_EdgeBox = Rectangle(345, 60, 95, 30, 76, 74, 89)
-ShowBasketPosition_EdgeBox = Rectangle(535, 60, 95, 30,76, 74, 89)
-ShowMachinePosition_EdgeBox = Rectangle(745, 60, 95, 30, 76, 74, 89)
+ShowBar_EdgeBox = Rectangle(120, 10, 800, 100, 76, 74, 89)
+ReSimulation_EdgeBox = Rectangle(380, 120, 200, 40, 76, 74, 89)
+ShowRecoilSpring_EdgeBox = Rectangle(160, 55, 95, 40, 76, 74, 89)
+ShowHeighWall_EdgeBox = Rectangle(345, 55, 95, 40, 76, 74, 89)
+ShowBasketPosition_EdgeBox = Rectangle(535, 55, 95, 40,76, 74, 89)
+ShowMachinePosition_EdgeBox = Rectangle(745, 55, 95, 40, 76, 74, 89)
 
 COLOR_INACTIVE = pg.Color(179, 179, 179) # ตั้งตัวแปรให้เก็บค่าสี เพื่อนำไปใช้เติมสีให้กับกล่องข้อความตอนที่คลิกที่กล่องนั้นๆอยู่
 COLOR_ACTIVE = pg.Color(0, 0, 0)   
 
 # ///////////////////////////////กล่องใส่ข้อมูล////////////////////////////////////////
 
-input_Recoil_spring = InputBox(180, 250, 140, 32)
-input_Basket_position = InputBox(180, 400, 140, 32)
+input_Recoil_spring = InputBox(190, 260, 140, 32)
+input_Basket_position = InputBox(190, 410, 140, 32)
 
 input_boxes = [input_Recoil_spring, input_Basket_position] # เก็บ InputBox ไว้ใน list เพื่อที่จะสามารถนำไปเรียกใช้ได้ง่าย
 
 # ///////////////////////////////ขนาดฟอนต์////////////////////////////////////////
 
-font = pg.font.Font('freesansbold.ttf', 15)
-font1 = pg.font.Font('freesansbold.ttf', 20)
-font2 = pg.font.Font('freesansbold.ttf', 25)
-font3 = pg.font.Font('freesansbold.ttf', 50)
-font4 = pg.font.Font('freesansbold.ttf', 40)
+font = pg.font.SysFont('malgungothic', 15)
+font1 = pg.font.SysFont('malgungothic', 20)
+font2 = pg.font.SysFont('malgungothic', 25)
+font3 = pg.font.SysFont('malgungothic', 50)
+font4 = pg.font.SysFont('malgungothic', 45)
 
 # ////////////////////////////////ข้อความ///////////////////////////////////////
 
@@ -279,34 +254,34 @@ textRect_START.center = (475, 565)
 
 text_RecoilSpring = font1.render('Recoil spring', True, (0,0,0), (219, 219, 219))
 textRect_RecoilSpring = text_RecoilSpring.get_rect()
-textRect_RecoilSpring.center = (210, 40)
-
+textRect_RecoilSpring.center = (210, 35)
 
 text_HeighWall = font1.render('Height of the Wall', True, (0,0,0), (219, 219, 219))
 textRect_HeighWall = text_HeighWall.get_rect()
-textRect_HeighWall.center = (390, 40)
+textRect_HeighWall.center = (390, 35)
 
 text_BasketPosition = font1.render('Basket position', True, (0,0,0), (219, 219, 219))
 textRect_BasketPosition = text_BasketPosition.get_rect()
-textRect_BasketPosition.center = (590, 40)
+textRect_BasketPosition.center = (590, 35)
 
 text_MachinePosition = font1.render('Machine position', True, (0,0,0), (219, 219, 219))
 textRect_MachinePosition = text_MachinePosition.get_rect()
-textRect_MachinePosition.center = (790, 40)
+textRect_MachinePosition.center = (790, 35)
 
 text_RESIMMULATION = font1.render('RESIMMULATION', True, (0,0,0), (255,255,255))
 textRect_RESIMMULATION = text_RESIMMULATION.get_rect()
-textRect_RESIMMULATION.center = (480, 130)
+textRect_RESIMMULATION.center = (480, 140)
 
 text_Back = font2.render('Back', True, (0,0,0), (255,255,255)) # (text,is smooth?,letter color,background color)
 textRect_Back = text_Back.get_rect() # text size
-textRect_Back.center = (53, 30)
+textRect_Back.center = (50, 30)
 
 # ///////////////////////////////////////////////////////////////////////
 
 
 START_BackgroundBox_press = False
 Back_BackgroundBox_press = True
+
 while(run):
     if Back_BackgroundBox_press == True:
         screen.fill((219, 219, 219))
@@ -330,107 +305,141 @@ while(run):
         screen.blit(text_ChoiceWall_50, textRect_ChoiceWall_50)
         ChoiceWall_100_BackgroundBox.draw(screen)
         screen.blit(text_ChoiceWall_100, textRect_ChoiceWall_100)
+
+        
         
         if ChoiceWall_50_BackgroundBox.isMouseOn():
             if ChoiceWall_50_BackgroundBox.isclick():
                 ChoiceWall_50_BackgroundBox_Press = True
                 ChoiceWall_100_BackgroundBox_Press = False
         if ChoiceWall_50_BackgroundBox_Press:
-            ChoiceWall_50_BackgroundBox.R,ChoiceWall_50_BackgroundBox.G,ChoiceWall_50_BackgroundBox.B = 0, 219, 0
-            ChoiceWall_100_BackgroundBox.R,ChoiceWall_100_BackgroundBox.G,ChoiceWall_100_BackgroundBox.B = 219, 219, 219
+                ChoiceWall_50_BackgroundBox.R,ChoiceWall_50_BackgroundBox.G,ChoiceWall_50_BackgroundBox.B = 0, 219, 0
+                ChoiceWall_100_BackgroundBox.R,ChoiceWall_100_BackgroundBox.G,ChoiceWall_100_BackgroundBox.B = 219, 219, 219
 
         if ChoiceWall_100_BackgroundBox.isMouseOn():
             if ChoiceWall_100_BackgroundBox.isclick():
-                ChoiceWall_100_BackgroundBox_Press = True
-                ChoiceWall_50_BackgroundBox_Press = False
+                    ChoiceWall_100_BackgroundBox_Press = True
+                    ChoiceWall_50_BackgroundBox_Press = False
         if ChoiceWall_100_BackgroundBox_Press:
             ChoiceWall_50_BackgroundBox.R,ChoiceWall_50_BackgroundBox.G,ChoiceWall_50_BackgroundBox.B = 219, 219, 219
             ChoiceWall_100_BackgroundBox.R,ChoiceWall_100_BackgroundBox.G,ChoiceWall_100_BackgroundBox.B = 0, 219, 0
-
+    
         for box in input_boxes: # ทำการเรียก InputBox ทุกๆตัว โดยการ Loop เข้าไปยัง list ที่เราเก็บค่า InputBox ไว้
             box.update() # เรียกใช้ฟังก์ชัน update() ของ InputBox
             box.draw(screen) 
     
-    if START_BackgroundBox.isMouseOn():
-        if START_BackgroundBox.isclick():
-            Back_BackgroundBox_press = False
-            START_BackgroundBox_press = True
+   
         
-        if START_BackgroundBox_press == True:
-            screen.fill((255,255,255))
-            Back_BackgroundBox.draw(screen)
-            Back_EdgeBox.draw(screen)
-            screen.blit(text_Back, textRect_Back)
-            ShowBar_BackgroundBox.draw(screen)
-            ShowBar_EdgeBox.draw(screen)
-            ShowRecoilSpring_BackgroundBox.draw(screen)
-            ShowRecoilSpring_EdgeBox.draw(screen)
-            screen.blit(text_RecoilSpring, textRect_RecoilSpring) 
-            ShowHeighWall_BackgroundBox.draw(screen)
-            ShowHeighWall_EdgeBox.draw(screen)
-            screen.blit(text_HeighWall, textRect_HeighWall)
-            ShowBasketPosition_BackgroundBox.draw(screen)
-            ShowBasketPosition_EdgeBox.draw(screen)
-            screen.blit(text_BasketPosition, textRect_BasketPosition)
-            ShowMachinePosition_BackgroundBox.draw(screen)
-            ShowMachinePosition_EdgeBox.draw(screen)
-            screen.blit(text_MachinePosition, textRect_MachinePosition)
-            ReSimulation_BackgroundBox.draw(screen)
-            ReSimulation_EdgeBox.draw(screen)
-            screen.blit(text_RESIMMULATION, textRect_RESIMMULATION)
-            if ReSimulation_BackgroundBox.isMouseOn():
-                ReSimulation_BackgroundBox.R,ReSimulation_BackgroundBox.G,ReSimulation_BackgroundBox.B = 0, 0, 0
-                ReSimulation_EdgeBox.R,ReSimulation_EdgeBox.G,ReSimulation_EdgeBox.B = 0,0,0
-                if ReSimulation_BackgroundBox.isclick():
-                    num_runSimulation = 0
-                    simu = Simulation(float(input_Recoil_spring.text)/100, float(input_Basket_position.text)/100)
-                    del simu.path[:]
-                    simu_squashBall = SquashBall(simu_shooting.x+(0.40*IStoPixel_x),720-(0.79*IStoPixel_y),0.02*IStoPixel_y,(255,0,0))
-            else:
-                ReSimulation_BackgroundBox.R,ReSimulation_BackgroundBox.G,ReSimulation_BackgroundBox.B = 255,255,255
-                ReSimulation_EdgeBox.R,ReSimulation_EdgeBox.G,ReSimulation_EdgeBox.B = 76, 74, 89
+    if START_BackgroundBox_press == True:
+        screen.fill((255,255,255))
+        Back_BackgroundBox.draw(screen)
+        Back_EdgeBox.draw(screen)
+        screen.blit(text_Back, textRect_Back)
+        ShowBar_BackgroundBox.draw(screen)
+        ShowBar_EdgeBox.draw(screen)
+        ShowRecoilSpring_BackgroundBox.draw(screen)
+        ShowRecoilSpring_EdgeBox.draw(screen)
+        screen.blit(text_RecoilSpring, textRect_RecoilSpring) 
+        ShowHeighWall_BackgroundBox.draw(screen)
+        ShowHeighWall_EdgeBox.draw(screen)
+        screen.blit(text_HeighWall, textRect_HeighWall)
+        ShowBasketPosition_BackgroundBox.draw(screen)
+        ShowBasketPosition_EdgeBox.draw(screen)
+        screen.blit(text_BasketPosition, textRect_BasketPosition)
+        ShowMachinePosition_BackgroundBox.draw(screen)
+        ShowMachinePosition_EdgeBox.draw(screen)
+        screen.blit(text_MachinePosition, textRect_MachinePosition)
+        ReSimulation_EdgeBox.draw(screen)
+        screen.blit(text_RESIMMULATION, textRect_RESIMMULATION)
+        
+
 # ///////////////////////////////จำลองการเคลื่อนที่ลูกสคอช////////////////////////////////////////
-            if num_runSimulation == 0:
-                simu = Simulation(float(input_Recoil_spring.text)/100, float(input_Basket_position.text)/100)
 
-            pg.draw.line(screen,(255,0,0),(win_x*0.80/3.25,720),(win_x*0.80/3.25,720-(0.77*IStoPixel_y)),2)
-            pg.draw.line(screen,(255,0,0),(win_x*2.80/3.25,720),(win_x*2.80/3.25,680),2)
-            pg.draw.line(screen,(255,0,0),(win_x*(2.80+(0.25*math.sqrt(3)))/3.25,720),(win_x*(2.80+(0.25*math.sqrt(3)))/3.25,680),2)
+        if num_runSimulation == 0:
+            simu = Simulation(float(input_Recoil_spring.text)/100, float(input_Basket_position.text)/100)
+
+        pg.draw.line(screen,(0,0,0),(win_x*0.80/3.25,720),(win_x*0.80/3.25,720-(0.77*IStoPixel_y)),2)
+        pg.draw.line(screen,(0,0,0),(win_x*2.80/3.25,720),(win_x*2.80/3.25,680),2)
+        pg.draw.line(screen,(0,0,0),(win_x*(2.80+(0.25*math.sqrt(3)))/3.25,720),(win_x*(2.80+(0.25*math.sqrt(3)))/3.25,680),2)
+            
     # ///////////////////////////////สร้างวัตถุ////////////////////////////////////////
-            if ChoiceWall_50_BackgroundBox_Press == True:
-                wall_height = 0.5
-            if ChoiceWall_100_BackgroundBox_Press == True:
-                wall_height = 1
-            simu_shooting = Shooting((win_x*0.80/3.25)-(0.40*IStoPixel_x)-(simu.shooting_distance*IStoPixel_x),720-(0.77*IStoPixel_y),0.40*IStoPixel_x,0.77*IStoPixel_y,(255,0,0))
-            simu_shooting.draw(screen)
-            simu_wall = Wall(win_x*1.78/3.25,win_y-(wall_height*IStoPixel_y),win_x*0.02/3.25,(wall_height*IStoPixel_y),(124,71,0))
-            simu_wall.draw(screen)
-            simu_basket = Basket((win_x*2.80/3.25)+(((float(input_Basket_position.text)/100)-0.065)*IStoPixel_x),720-(0.35*IStoPixel_y),0.13*IStoPixel_x,0.35*IStoPixel_y,(255,0,0))
-            simu_basket.draw(screen)
-    # ///////////////////////////////ยิง////////////////////////////////////////        
-            if num_runSimulation == 0:
-                simu_squashBall = SquashBall(simu_shooting.x+(0.40*IStoPixel_x),720-(0.79*IStoPixel_y),0.02*IStoPixel_y,(255,0,0))
-            simu.path.append((simu_squashBall.x,simu_squashBall.y))
-            for i in simu.path:
-                pg.draw.circle(screen,(0,255,0),i,1)
-            simu_squashBall.draw(screen)
 
-            simu.uy = simu.uy + (simu.g*simu.time)
-            simu_squashBall.x += (simu.ux*simu.time)*IStoPixel_x
-            simu_squashBall.y -= ((simu.uy*simu.time)-(0.5*simu.g*(simu.time**2)))*IStoPixel_y
-            simu.time += 0.00001
-            num_runSimulation += 1
+        if ChoiceWall_50_BackgroundBox_Press == True:
+            wall_height = 0.5
+            Showwall_height = '50'
+        if ChoiceWall_100_BackgroundBox_Press == True:
+            wall_height = 1
+            Showwall_height = '100'
+        simu_shooting = Shooting((win_x*0.80/3.25)-(0.40*IStoPixel_x)-(simu.shooting_distance*IStoPixel_x),720-(0.77*IStoPixel_y),0.40*IStoPixel_x,0.77*IStoPixel_y,(179,179,179))
+        simu_shooting.draw(screen)
+        simu_wall = Wall(win_x*1.78/3.25,win_y-(wall_height*IStoPixel_y),win_x*0.02/3.25,(wall_height*IStoPixel_y),(202,128,74))
+        simu_wall.draw(screen)
+        simu_basket = Basket((win_x*2.80/3.25)+(((float(input_Basket_position.text)/100)-0.065)*IStoPixel_x),720-(0.35*IStoPixel_y),0.13*IStoPixel_x,0.35*IStoPixel_y,(153,76,0))
+        simu_basket.draw(screen)
+
+    # ///////////////////////////////ยิง////////////////////////////////////////       
+     
+        if num_runSimulation == 0:
+            simu_squashBall = SquashBall(simu_shooting.x+(0.40*IStoPixel_x),720-(0.79*IStoPixel_y),0.02*IStoPixel_y,(255,0,0))
+        simu.path.append((simu_squashBall.x,simu_squashBall.y))
+        for i in simu.path:
+            pg.draw.circle(screen,(0,255,0),i,1)
+        simu_squashBall.draw(screen)
+
+        simu.uy = simu.uy + (simu.g*simu.time)
+        simu_squashBall.x += (simu.ux*simu.time)*IStoPixel_x
+        simu_squashBall.y -= ((simu.uy*simu.time)-(0.5*simu.g*(simu.time**2)))*IStoPixel_y
+        simu.time += 0.00001
+
+    # /////////////////////////////////////ShowBar/////////////////////////////////////////////
+
+        text_ShowRecoilSpring = font1.render(input_Recoil_spring.text, True, (0,0,0), (255, 255, 255))
+        textRect_ShowRecoilSpring = text_ShowRecoilSpring.get_rect()
+        textRect_ShowRecoilSpring.center = (205, 73)
+
+        text_ShowHeighWall = font1.render(Showwall_height, True, (0,0,0), (255, 255, 255))
+        textRect_ShowHeighWall = text_ShowHeighWall.get_rect()
+        textRect_ShowHeighWall.center = (390, 73)
+
+        text_ShowBasketPosition = font1.render(input_Basket_position.text, True, (0,0,0), (255, 255, 255))
+        textRect_ShowBasketPosition = text_ShowBasketPosition.get_rect()
+        textRect_ShowBasketPosition.center = (580, 73)
+
+        MachinePosition = int(simu.shooting_distance*10**2)
+        
+        text_ShowMachinePosition = font1.render(str(MachinePosition), True, (0,0,0), (255, 255, 255))
+        textRect_ShowMachinePosition = text_ShowMachinePosition.get_rect()
+        textRect_ShowMachinePosition.center = (790, 73)
+
+
+
+        screen.blit(text_ShowRecoilSpring, textRect_ShowRecoilSpring)
+        screen.blit(text_ShowBasketPosition, textRect_ShowBasketPosition)
+        screen.blit(text_ShowHeighWall, textRect_ShowHeighWall)
+        screen.blit(text_ShowMachinePosition, textRect_ShowMachinePosition)
+
+        
+        
+        num_runSimulation += 1        
             
-            
+     
 
     pg.display.update()
     for event in pg.event.get():
+        if START_BackgroundBox.isMouseOn():
+            if START_BackgroundBox.isclick():
+                Back_BackgroundBox_press = False
+                START_BackgroundBox_press = True
         if Back_BackgroundBox.isMouseOn():
                 if Back_BackgroundBox.isclick():
                     Back_BackgroundBox_press = True
                     START_BackgroundBox_press = False
                     num_runSimulation = 0
-        
+        if ReSimulation_BackgroundBox.isMouseOn():
+                if ReSimulation_BackgroundBox.isclick():
+                    num_runSimulation = 0
+                    START_BackgroundBox_press = True
+                    
         for box in input_boxes:
             box.handle_event(event)
         if event.type == pg.QUIT:
