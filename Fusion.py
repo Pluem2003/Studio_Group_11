@@ -358,69 +358,211 @@ while(run):
         if num_runSimulation == 0:
             simu = Simulation(float(input_Recoil_spring.text)/100, float(input_Basket_position.text)/100)
 
-        pg.draw.line(screen,(0,0,0),(win_x*0.80/3.25,720),(win_x*0.80/3.25,720-(0.77*IStoPixel_y)),2)
-        pg.draw.line(screen,(0,0,0),(win_x*2.80/3.25,720),(win_x*2.80/3.25,680),2)
-        pg.draw.line(screen,(0,0,0),(win_x*(2.80+(0.25*math.sqrt(3)))/3.25,720),(win_x*(2.80+(0.25*math.sqrt(3)))/3.25,680),2)
+        if simu.shooting_distance < 0:
+            font_error = pg.font.SysFont('malgungothic', 120)
+            text_error = font_error.render('ERROR', True, (255,0,0), (255, 255, 255))
+            textRect_error = text_error.get_rect()
+            textRect_error.center = (win_x/2, win_y/2)
+            screen.blit(text_error, textRect_error)
+            input_Recoil_spring_test_min = float(input_Recoil_spring.text)/100
+            input_Basket_position_test_min = float(input_Basket_position.text)/100
+            shooting_distance_test_min = simu.shooting_distance
+            while shooting_distance_test_min < 0:
+                simu_test = Simulation(input_Recoil_spring_test_min, input_Basket_position_test_min)
+                shooting_distance_test_min = simu_test.shooting_distance
+                input_Recoil_spring_test_min+=0.00001
+            input_Recoil_spring_test_max = float(input_Recoil_spring.text)/100
+            input_Basket_position_test_max = float(input_Basket_position.text)/100
+            shooting_distance_test_max = simu.shooting_distance
+            while shooting_distance_test_max < 0.4:
+                simu_test = Simulation(input_Recoil_spring_test_max, input_Basket_position_test_max)
+                shooting_distance_test_max = simu_test.shooting_distance
+                input_Recoil_spring_test_max+=0.00001
+
+            input_Recoil_spring_test_min_cm = float(input_Recoil_spring_test_min*100)
+            formatted_input_Recoil_spring_test_min_cm = "{:.2f}".format(input_Recoil_spring_test_min_cm)
+
+            input_Recoil_spring_test_max_cm = float(input_Recoil_spring_test_max*100)
+            formatted_input_Recoil_spring_test_max_cm = "{:.2f}".format(input_Recoil_spring_test_max_cm)
+
+            font_text_input_Recoil_spring_test = pg.font.SysFont('malgungothic', 20)   
+            text_input_Recoil_spring_test = font_text_input_Recoil_spring_test.render('Recoil spring recommended is '+ str(formatted_input_Recoil_spring_test_min_cm) + ' - ' + str(formatted_input_Recoil_spring_test_max_cm), True, (255,0,0), (255, 255, 255))
+            textRect_input_Recoil_spring_test = text_input_Recoil_spring_test.get_rect()
+            textRect_input_Recoil_spring_test.center = (win_x/2, (win_y/2)+300)
+            screen.blit(text_input_Recoil_spring_test, textRect_input_Recoil_spring_test)
+        elif simu.shooting_distance > 0.4:
+            font_error = pg.font.SysFont('malgungothic', 120)
+            text_error = font_error.render('ERROR', True, (255,0,0), (255, 255, 255))
+            textRect_error = text_error.get_rect()
+            textRect_error.center = (win_x/2, win_y/2)
+            screen.blit(text_error, textRect_error)
+            input_Recoil_spring_test_max = float(input_Recoil_spring.text)/100
+            input_Basket_position_test_max = float(input_Basket_position.text)/100
+            shooting_distance_test_max = simu.shooting_distance
+            while shooting_distance_test_max > 0.4:
+                simu_test = Simulation(input_Recoil_spring_test_max, input_Basket_position_test_max)
+                shooting_distance_test_max = simu_test.shooting_distance
+                input_Recoil_spring_test_max-=0.00001
+            input_Recoil_spring_test_min = float(input_Recoil_spring.text)/100
+            input_Basket_position_test_min = float(input_Basket_position.text)/100
+            shooting_distance_test_min = simu.shooting_distance
+            while shooting_distance_test_min > 0:
+                simu_test = Simulation(input_Recoil_spring_test_min, input_Basket_position_test_min)
+                shooting_distance_test_min = simu_test.shooting_distance
+                input_Recoil_spring_test_min-=0.00001
+
+            input_Recoil_spring_test_min_cm = float(input_Recoil_spring_test_min*100)
+            formatted_input_Recoil_spring_test_min_cm = "{:.2f}".format(input_Recoil_spring_test_min_cm)
+
+            input_Recoil_spring_test_max_cm = float(input_Recoil_spring_test_max*100)
+            formatted_input_Recoil_spring_test_max_cm = "{:.2f}".format(input_Recoil_spring_test_max_cm)
+
+            font_text_input_Recoil_spring_test = pg.font.SysFont('malgungothic', 20)   
+            text_input_Recoil_spring_test = font_text_input_Recoil_spring_test.render('Recoil spring recommended is '+ str(formatted_input_Recoil_spring_test_min_cm) + ' - ' + str(formatted_input_Recoil_spring_test_max_cm), True, (255,0,0), (255, 255, 255))
+            textRect_input_Recoil_spring_test = text_input_Recoil_spring_test.get_rect()
+            textRect_input_Recoil_spring_test.center = (win_x/2, (win_y/2)+300)
+            screen.blit(text_input_Recoil_spring_test, textRect_input_Recoil_spring_test)
             
-    # ///////////////////////////////สร้างวัตถุ////////////////////////////////////////
+        else:
+            pg.draw.line(screen,(0,0,0),(0,720),(0,660),2)
+            pg.draw.line(screen,(0,0,0),(win_x*0.80/3.25,720),(win_x*0.80/3.25,660),2)
+            pg.draw.line(screen,(0,0,0),(win_x*2.80/3.25,720),(win_x*2.80/3.25,660),2)
+            pg.draw.line(screen,(0,0,0),(win_x*(2.80+(0.25*math.sqrt(3)))/3.25,720),(win_x*(2.80+(0.25*math.sqrt(3)))/3.25,660),2)
+                
+        # ///////////////////////////////สร้างวัตถุ////////////////////////////////////////
 
-        if ChoiceWall_50_BackgroundBox_Press == True:
-            wall_height = 0.5
-            Showwall_height = '50'
-        if ChoiceWall_100_BackgroundBox_Press == True:
-            wall_height = 1
-            Showwall_height = '100'
-        simu_shooting = Shooting((win_x*0.80/3.25)-(0.40*IStoPixel_x)-(simu.shooting_distance*IStoPixel_x),720-(0.77*IStoPixel_y),0.40*IStoPixel_x,0.77*IStoPixel_y,(179,179,179))
-        simu_shooting.draw(screen)
-        simu_wall = Wall(win_x*1.78/3.25,win_y-(wall_height*IStoPixel_y),win_x*0.02/3.25,(wall_height*IStoPixel_y),(202,128,74))
-        simu_wall.draw(screen)
-        simu_basket = Basket((win_x*2.80/3.25)+(((float(input_Basket_position.text)/100)-0.065)*IStoPixel_x),720-(0.35*IStoPixel_y),0.13*IStoPixel_x,0.35*IStoPixel_y,(153,76,0))
-        simu_basket.draw(screen)
+            if ChoiceWall_50_BackgroundBox_Press == True:
+                wall_height = 0.5
+                Showwall_height = '50'
+            if ChoiceWall_100_BackgroundBox_Press == True:
+                wall_height = 1
+                Showwall_height = '100'
+            simu_shooting = Shooting((win_x*0.80/3.25)-(0.40*IStoPixel_x)-(simu.shooting_distance*IStoPixel_x),720-(0.77*IStoPixel_y),0.40*IStoPixel_x,(0.77*IStoPixel_y)+20,(219,100,179))
+            simu_shooting.draw(screen)
+            simu_wall = Wall(win_x*1.78/3.25,win_y-(wall_height*IStoPixel_y),win_x*0.02/3.25,(wall_height*IStoPixel_y),(255,192,159))
+            simu_wall.draw(screen)
+            simu_basket = Basket((win_x*2.80/3.25)+(((float(input_Basket_position.text)/100)-0.065)*IStoPixel_x),720-(0.35*IStoPixel_y),0.13*IStoPixel_x,(0.35*IStoPixel_y)+20,(100,50,0))
+            simu_basket.draw(screen)
+            
+            pg.draw.line(screen,(150, 150, 150),((win_x*0.80/3.25)-(0.40*IStoPixel_x)-(simu.shooting_distance*IStoPixel_x)+(0.40*IStoPixel_x),680),((win_x*1.08/3.25),680),2)
+            pg.draw.line(screen,(150, 150, 150),((win_x*2.80/3.25)+(((float(input_Basket_position.text)/100)-0.065)*IStoPixel_x),680),((win_x*2.52/3.25),680),2)
 
-    # ///////////////////////////////ยิง////////////////////////////////////////       
-     
-        if num_runSimulation == 0:
-            simu_squashBall = SquashBall(simu_shooting.x+(0.40*IStoPixel_x),720-(0.79*IStoPixel_y),0.02*IStoPixel_y,(255,0,0))
-        simu.path.append((simu_squashBall.x,simu_squashBall.y))
-        for i in simu.path:
-            pg.draw.circle(screen,(0,255,0),i,1)
-        simu_squashBall.draw(screen)
-
-        simu.uy = simu.uy + (simu.g*simu.time)
-        simu_squashBall.x += (simu.ux*simu.time)*IStoPixel_x
-        simu_squashBall.y -= ((simu.uy*simu.time)-(0.5*simu.g*(simu.time**2)))*IStoPixel_y
-        simu.time += 0.00001
-
-    # /////////////////////////////////////ShowBar/////////////////////////////////////////////
-
-        text_ShowRecoilSpring = font1.render(input_Recoil_spring.text, True, (0,0,0), (255, 255, 255))
-        textRect_ShowRecoilSpring = text_ShowRecoilSpring.get_rect()
-        textRect_ShowRecoilSpring.center = (205, 73)
-
-        text_ShowHeighWall = font1.render(Showwall_height, True, (0,0,0), (255, 255, 255))
-        textRect_ShowHeighWall = text_ShowHeighWall.get_rect()
-        textRect_ShowHeighWall.center = (390, 73)
-
-        text_ShowBasketPosition = font1.render(input_Basket_position.text, True, (0,0,0), (255, 255, 255))
-        textRect_ShowBasketPosition = text_ShowBasketPosition.get_rect()
-        textRect_ShowBasketPosition.center = (580, 73)
-
-        MachinePosition = int(simu.shooting_distance*10**2)
+        # ///////////////////////////////ยิง////////////////////////////////////////       
         
-        text_ShowMachinePosition = font1.render(str(MachinePosition), True, (0,0,0), (255, 255, 255))
-        textRect_ShowMachinePosition = text_ShowMachinePosition.get_rect()
-        textRect_ShowMachinePosition.center = (790, 73)
+            if num_runSimulation == 0:
+                simu_squashBall = SquashBall(simu_shooting.x+(0.40*IStoPixel_x),720-(0.79*IStoPixel_y),0.02*IStoPixel_y,(255,0,0))
+            simu.path.append((simu_squashBall.x,simu_squashBall.y))
+            for i in simu.path:
+                pg.draw.circle(screen,(0, 219, 0),i,1)
+            simu_squashBall.draw(screen)
+
+            simu.uy = simu.uy + (simu.g*simu.time)
+            simu_squashBall.x += (simu.ux*simu.time)*IStoPixel_x
+            simu_squashBall.y -= ((simu.uy*simu.time)-(0.5*simu.g*(simu.time**2)))*IStoPixel_y
+            simu.time += 0.00001
+
+        # /////////////////////////////////////ShowBar/////////////////////////////////////////////
+
+            text_ShowRecoilSpring = font1.render(input_Recoil_spring.text + ' cm', True, (0,0,0), (255, 255, 255))
+            textRect_ShowRecoilSpring = text_ShowRecoilSpring.get_rect()
+            textRect_ShowRecoilSpring.center = (205, 73)
+
+            text_ShowHeighWall = font1.render(Showwall_height + ' cm', True, (0,0,0), (255,255,255))
+            textRect_ShowHeighWall = text_ShowHeighWall.get_rect()
+            textRect_ShowHeighWall.center = (390, 73)
+
+            text_ShowBasketPosition = font1.render(input_Basket_position.text + ' cm', True, (0,0,0), (255, 255, 255))
+            textRect_ShowBasketPosition = text_ShowBasketPosition.get_rect()
+            textRect_ShowBasketPosition.center = (580, 73)
+
+            textRect_ShowBasketPosition_line = text_ShowBasketPosition.get_rect()
+            textRect_ShowBasketPosition_line.center = (785, 665)
+
+            MachinePosition = float(simu.shooting_distance*100)
+            formatted_MachinePosition = "{:.1f}".format(MachinePosition)
+            
+            text_ShowMachinePosition = font1.render(str(formatted_MachinePosition) + ' cm', True, (0,0,0), (255, 255, 255))
+            textRect_ShowMachinePosition = text_ShowMachinePosition.get_rect()
+            textRect_ShowMachinePosition.center = (790, 73)
+
+            textRect_ShowMachinePosition_line = text_ShowMachinePosition.get_rect()
+            textRect_ShowMachinePosition_line.center = (278, 665)
 
 
 
-        screen.blit(text_ShowRecoilSpring, textRect_ShowRecoilSpring)
-        screen.blit(text_ShowBasketPosition, textRect_ShowBasketPosition)
-        screen.blit(text_ShowHeighWall, textRect_ShowHeighWall)
-        screen.blit(text_ShowMachinePosition, textRect_ShowMachinePosition)
+            screen.blit(text_ShowRecoilSpring, textRect_ShowRecoilSpring)
+            screen.blit(text_ShowBasketPosition, textRect_ShowBasketPosition)
+            screen.blit(text_ShowHeighWall, textRect_ShowHeighWall)
+            screen.blit(text_ShowMachinePosition, textRect_ShowMachinePosition)
 
-        
-        
-        num_runSimulation += 1        
+            screen.blit(text_ShowBasketPosition, textRect_ShowBasketPosition_line)
+            screen.blit(text_ShowMachinePosition, textRect_ShowMachinePosition_line)
+
+        # /////////////////////////////////////ทำหัวลูกศรตรงตะกร้า/////////////////////////////////////////////
+            # Define the start and end points of the line
+            start_pos_basket = (win_x*2.80/3.25,680)
+            end_pos_basket = ((win_x*2.80/3.25)+(((float(input_Basket_position.text)/100)-0.065)*IStoPixel_x),680)
+
+            # Calculate the angle of the line
+            angle_basket = math.radians(45)
+            print(angle_basket)
+
+            # Calculate the points for the arrowhead
+            tick_length_basket = 10
+            tick1 = (
+                end_pos_basket[0] - tick_length_basket * math.cos(angle_basket - math.pi / 2),
+                end_pos_basket[1] - tick_length_basket * math.sin(angle_basket - math.pi / 2),
+            )
+            tick2 = (
+                end_pos_basket[0] - tick_length_basket * math.cos(math.radians(45)),
+                end_pos_basket[1] - tick_length_basket * math.sin(math.radians(45)),
+            )
+            tick3 = (
+                start_pos_basket[0] - tick_length_basket * math.cos(angle_basket + math.pi / 2),
+                start_pos_basket[1] - tick_length_basket * math.sin(angle_basket + math.pi / 2),
+            )
+            tick4 = (
+                start_pos_basket[0] - tick_length_basket * math.cos(math.radians(45) + math.pi),
+                start_pos_basket[1] - tick_length_basket * math.sin(math.radians(45) + math.pi),
+            )
+            pg.draw.line(screen, (150,150,150), tick1, end_pos_basket, 2)
+            pg.draw.line(screen, (150,150,150), tick2, end_pos_basket, 2)
+            pg.draw.line(screen, (150,150,150), tick3, start_pos_basket, 2)
+            pg.draw.line(screen, (150,150,150), tick4, start_pos_basket, 2)
+            
+        # /////////////////////////////////////ทำหัวลูกศรตรงเครื่องยิง/////////////////////////////////////////////
+            # Define the start and end points of the line
+            start_pos_basket = ((win_x*0.80/3.25)-(0.40*IStoPixel_x)-(simu.shooting_distance*IStoPixel_x)+(0.40*IStoPixel_x),680)
+            end_pos_basket = (win_x*0.80/3.25,680)
+
+            # Calculate the angle of the line
+            angle_basket = math.radians(45)
+
+            # Calculate the points for the arrowhead
+            tick_length_basket = 10
+            tick5 = (
+                end_pos_basket[0] - tick_length_basket * math.cos(angle_basket - math.pi / 2),
+                end_pos_basket[1] - tick_length_basket * math.sin(angle_basket - math.pi / 2),
+            )
+            tick6 = (
+                end_pos_basket[0] - tick_length_basket * math.cos(math.radians(45)),
+                end_pos_basket[1] - tick_length_basket * math.sin(math.radians(45)),
+            )
+            tick7 = (
+                start_pos_basket[0] - tick_length_basket * math.cos(angle_basket + math.pi / 2),
+                start_pos_basket[1] - tick_length_basket * math.sin(angle_basket + math.pi / 2),
+            )
+            tick8 = (
+                start_pos_basket[0] - tick_length_basket * math.cos(math.radians(45) + math.pi),
+                start_pos_basket[1] - tick_length_basket * math.sin(math.radians(45) + math.pi),
+            )
+            pg.draw.line(screen, (150,150,150), tick5, end_pos_basket, 2)
+            pg.draw.line(screen, (150,150,150), tick6, end_pos_basket, 2)
+            pg.draw.line(screen, (150,150,150), tick7, start_pos_basket, 2)
+            pg.draw.line(screen, (150,150,150), tick8, start_pos_basket, 2)
+            num_runSimulation += 1
+
+                
             
      
 
